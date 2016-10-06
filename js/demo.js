@@ -3,6 +3,7 @@
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(
   80, window.innerWidth / window.innerHeight, 0.1, 20000);
+camera.position.set(10, 10, 10);
 camera.up.set(0, 0, 1);  // Set +z as up
 
 var DPR = (window.devicePixelRatio) ? window.devicePixelRatio : 1;
@@ -52,11 +53,32 @@ var skyGeometry = new THREE.CubeGeometry( 5000, 5000, 5000 );
 var materialArray = [];
 for (var i = 0; i < 6; i++)
   materialArray.push( new THREE.MeshBasicMaterial({
-    map: THREE.ImageUtils.loadTexture( imagePrefix + directions[i] + imageSuffix ),
+    map: THREE.ImageUtils.loadTexture(imagePrefix + directions[i] +
+                                      imageSuffix),
     side: THREE.BackSide
   }));
 var skyMaterial = new THREE.MeshFaceMaterial( materialArray );
 var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
 scene.add( skyBox );
+
+/////////////////////
+// SPACESHIP MODEL //
+/////////////////////
+        var ambient = new THREE.AmbientLight( 0x222222 );
+        scene.add( ambient );
+
+        var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+        directionalLight.position.set( 0, 1, 0);
+        scene.add( directionalLight );
+var loader = new THREE.JSONLoader();
+loader.load('models/spaceship.json', function(geo, mats) {
+  console.log(mats)
+  var material = new THREE.MultiMaterial(mats);
+  var obj = new THREE.Mesh(geo, material);
+  obj.rotation.x = 1.57
+  scene.add(obj);
+});
+
+
 
 })();
